@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.codex-remote-attachments/
+*.pyc
+.env*
+data/
+models/*.onnx
+models/*.json
+models/*.wav
+*.log

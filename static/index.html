@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101519"><title>R2 · At your command</title>
+  <link rel="stylesheet" href="/static/style.css"><script src="/static/app.js" type="module"></script>
+</head>
+<body>
+  <header><a class="brand" href="/" aria-label="R2 home"><span class="brand-icon">R<span>2</span></span><span>YOUR HOME, IN CONVERSATION</span></a><button id="settings-open" class="ghost">⚙ <span>Settings</span></button></header>
+  <main>
+    <section class="voice-panel">
+      <div class="eyebrow"><span id="status-dot" class="dot"></span><span id="connection-label">LOCAL COMPANION</span></div>
+      <h1>A little help.<br><em>Just say the word.</em></h1>
+      <p class="intro">Your lights. Your doors. A quick answer.</p>
+      <div class="orb-wrap" id="orb-wrap" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orb"><div class="eye"></div><div class="orb-label">R2</div></div><div class="orb-shadow"></div></div>
+      <div class="voice-status"><h2 id="state-title">Ready when you are</h2><p id="state-description">Start listening, then say “Hey R2.”</p></div>
+      <div class="main-controls"><button id="start" class="primary">◉ &nbsp; Start Listening</button><button id="talk" class="secondary">Talk to R2 <span>↗</span></button></div>
+      <div class="minor-controls"><button id="mute" disabled>Mute microphone</button><span>·</span><button id="end" disabled>End conversation</button></div>
+      <div id="notice" class="notice" role="status" hidden></div>
+      <div class="examples"><span>TRY SAYING</span><p>“Turn on the bedroom lights.”</p><p>“Is the front door locked?”</p><p>“When’s the next SpaceX launch?”</p></div>
+      <div class="privacy"><span>⌁</span><p id="privacy-text">Wake-word listening stays on this computer.<br>Audio goes to OpenAI only during a conversation.</p></div>
+    </section>
+    <aside class="context-panel">
+      <section class="home-section"><div class="section-heading"><h2>Your home</h2><span id="light-count" class="pill">NOT CONNECTED</span></div><p class="section-subtitle">A little light, exactly where you need it.</p><div id="rooms" class="rooms"><div class="empty-home"><span>⌂</span><h3>Make yourself at home</h3><p>Connect Home Assistant in Settings to see your rooms and lights here.</p><button id="connect-home" class="text-button">Connect Home Assistant →</button></div></div></section>
+      <section id="doors-section" class="doors-section" hidden><div class="section-heading"><h2>Your doors</h2></div><p class="section-subtitle">Ask R2 to lock, unlock, or check a named door.</p><div id="doors" class="rooms" aria-live="polite"></div></section>
+      <section class="conversation-section"><div class="section-heading"><h2>Conversation</h2><span id="session-clock">STANDING BY</span></div><div id="transcript" class="transcript" aria-live="polite"><div class="empty-conversation"><span class="chat-icon">“</span><p>A place for your conversation.<br>Your words and R2’s replies appear here.</p></div></div><div id="sources" class="sources" hidden><h3>From the web</h3><div id="source-links"></div></div></section>
+      <footer><span><i class="dot small"></i> BUILT FOR YOUR HOME</span><span id="wake-badge">WAKE WORD · CHECKING</span></footer>
+    </aside>
+  </main>
+  <dialog id="settings-dialog">
+    <div class="dialog-header"><div><div class="eyebrow">MAKE R2 YOURS</div><h2>Connections & listening</h2></div><button id="settings-close" class="icon-button" aria-label="Close settings">×</button></div>
+    <form id="settings-form">
+      <fieldset><legend>OpenAI</legend><p id="openai-status">Not connected</p><label for="openai-key">API key</label><input id="openai-key" type="password" autocomplete="off" placeholder="Enter your OpenAI project API key"><small>Saved in Windows Credential Manager. GPT-Live and search require API billing.</small><a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer">Open OpenAI API keys ↗</a></fieldset>
+      <fieldset><legend>Home Assistant</legend><p id="ha-status">Not connected</p><label for="ha-url">Local address</label><input id="ha-url" value="http://homeassistant.local:8123" type="url"><label for="ha-token">Long-lived access token</label><input id="ha-token" type="password" autocomplete="off" placeholder="Enter a token from your Home Assistant profile"><small>The seven configured Tapo bulbs and doors selected below are permitted. Leave saved credentials blank to keep them.</small><a href="http://homeassistant.local:8123/profile/security" target="_blank" rel="noopener noreferrer">Open Home Assistant profile ↗</a></fieldset>
+      <div class="form-footer"><span id="save-result" role="status"></span><button type="submit" class="primary" id="save">Save connections</button></div>
+    </form>
+    <section class="lock-settings"><h3>Door voice control</h3><p>Select the doors R2 can lock and unlock, and give each a distinct name.</p><div id="lock-options"></div><div class="calibration-buttons"><button id="refresh-locks" class="ghost">Refresh doors</button><button id="save-locks" class="secondary" disabled>Save door settings</button></div><p id="lock-save-result" role="status"></p></section>
+    <section class="wake-settings"><h3>“Hey R2” wake word</h3><p id="wake-status">Checking model…</p><div class="wake-meter"><div id="wake-meter-fill"></div></div><div class="setting-row"><label for="threshold">Detection threshold</label><input id="threshold" type="range" min="0.1" max="0.99" step="0.01" value="0.65"><output id="threshold-value">0.65</output></div><small>Lower catches more quiet speech; higher reduces accidental activations. Test mode never opens a cloud session.</small><div class="calibration-buttons"><button id="test-wake" class="secondary">Test wake word locally</button><button id="save-threshold" class="ghost">Save threshold</button></div><p id="test-result" role="status"></p><details><summary>Tune with your microphone</summary><p>Record “Hey R2” once per four-second clip. Make at least 10 recordings at different distances, then record several clips of ordinary conversation without the wake phrase. These recordings stay in this app’s local data folder.</p><div class="calibration-buttons"><button id="record-positive" class="secondary">Record “Hey R2”</button><button id="record-negative" class="secondary">Record background</button></div><p id="record-status" role="status"></p><button id="train" class="secondary">Train with local recordings</button></details><label class="checkbox"><input id="wake-validated" type="checkbox"> I tested the wake phrase with this microphone and it works reliably.</label></section>
+    <div class="cost-note">A conversation ends after 30 quiet seconds, with a five-minute maximum. Voice is billed by connection time; backend and search usage are additional. Idle local listening has no OpenAI usage.</div>
+  </dialog>
+</body>
+</html>
+
