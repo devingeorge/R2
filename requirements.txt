@@ -1,0 +1,10 @@
+fastapi>=0.115,<1
+uvicorn>=0.30,<1
+websockets>=14,<17
+httpx>=0.27,<1
+openai>=3.19.2,<4
+keyring>=25,<26
+numpy>=1.26,<3
+scipy>=1.12,<2
+openwakeword==0.6.0
+onnxruntime>=1.18,<2
